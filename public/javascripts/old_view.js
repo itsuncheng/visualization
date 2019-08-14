@@ -109,6 +109,7 @@ var secondWordPos = undefined;
 
 var clickCount = 0;
 var timeout = 250;
+var prevMeshPos = undefined;
 
 function onClick(event) {
   if (addLineMode){
@@ -159,19 +160,37 @@ function onClick(event) {
           console.log('singleClick');
           for (let i=0; i<intersects.length; i++){
             if (intersects[i].object.geometry.type == "CylinderGeometry"){
-              camera.position.set(intersects[i].object.position.x, intersects[i].object.position.y, intersects[i].object.position.z);
-              // var vector = new THREE.Vector3(0, 0, -1);
-              // vector.applyQuaternion(camera.quaternion);
-              // camera.lookAt(vector);
-              // camera.position = intersects[i].object.position;
-              camera.translateZ(130); // where `r` is the desired distance
+              console.log("prevMeshPos changed to cameraPos");
+              camera.position.set(intersects[i].object.position.x + 10, intersects[i].object.position.y + 10, intersects[i].object.position.z);
+              var vector = new THREE.Vector3(0, 0, -1);
+              vector.applyQuaternion(camera.quaternion);
+              camera.lookAt(vector);
+  
+  
               controls.update();
+              prevMeshPos = intersects[i].object.position;
+              // prevMeshPos = camera.position;
+              // console.log("prevMeshPos here changed: " + JSON.stringify(prevMeshPos));
               break;
             }
           }
         } else {
           console.log('double click');
           for (let i=0; i<intersects.length; i++){
+            // console.log("prevMeshPos: " + JSON.stringify(prevMeshPos));
+            // console.log("cameraPos: " + JSON.stringify(camera.position));
+            // console.log(comparePos(prevMeshPos, camera.position));
+            // if (intersects[i].object.geometry.type == "CylinderGeometry" && comparePos(prevMeshPos, camera.position) ){
+            //   console.log('Drawing a line...');
+            //   var geometry = new THREE.Geometry();
+            //   geometry.vertices.push(new THREE.Vector3(intersects[i].object.position.x,
+            //     intersects[i].object.position.y, intersects[i].object.position.z));
+            //   geometry.vertices.push(new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z) );
+            //   var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+            //   var line = new THREE.Line( geometry, material );
+            //   scene.add( line );
+            //   break;
+            // }
             if(intersects[i].object.geometry.type == "Geometry"){
               scene.remove(intersects[i].object);
               break;
