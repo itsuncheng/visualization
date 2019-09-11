@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title><%= title%></title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+  <script src="http://malsup.github.com/jquery.form.js"></script>
+  <!-- <script> 
+    // wait for the DOM to be loaded 
+    $(document).ready(function() { 
+        // bind 'myForm' and provide a simple callback function 
+        $('#myForm').ajaxForm({
+          url: "http://eez114.ece.ust.hk:8000/api/ask",
+          dataType: "json",
+          beforeSubmit: showRequest,
+          success: showResponse
+        }); 
+    }); 
+
+    function showRequest(formData, jqForm, options) { 
+        // formData is an array; here we use $.param to convert it to a string to display it 
+        // but the form plugin does this for you automatically when it submits the data 
+        var queryString = $.param(formData); 
+    
+        // jqForm is a jQuery object encapsulating the form element.  To access the 
+        // DOM element for the form do this: 
+        // var formElement = jqForm[0]; 
+    
+        alert('About to submit: \n\n' + queryString); 
+    
+        // here we could return false to prevent the form from being submitted; 
+        // returning anything other than false will allow the form submit to continue 
+        return true; 
+    } 
+    var result;
+    function showResponse(responseText, statusText, xhr, $form)  { 
+    // for normal html responses, the first argument to the success callback 
+    // is the XMLHttpRequest object's responseText property 
+ 
+    // if the ajaxForm method was passed an Options Object with the dataType 
+    // property set to 'xml' then the first argument to the success callback 
+    // is the XMLHttpRequest object's responseXML property 
+ 
+    // if the ajaxForm method was passed an Options Object with the dataType 
+    // property set to 'json' then the first argument to the success callback 
+    // is the json data object returned by the server 
+ 
+    alert('status: ' + statusText + '\n\nresponseText: \n' + responseText + 
+        '\n\nThe output div should have already been updated with the responseText.'); 
+    result = responseText
+} 
+</script>  -->
+
+  <script type="text/javascript">
+  	function addHidden(theForm, key, value) {
+    // Create a hidden input element, and append it to the form:
+	    var input = document.createElement('input');
+	    input.type = 'hidden';
+	    input.name = key; // 'the key/name of the attribute/field that is sent to the server
+	    input.value = value;
+	    theForm.appendChild(input);
+    }	
+    var response;
+    function my_send() {
+      var form = document.getElementById("myForm")
+      var sessionid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      addHidden(form, "session_id", sessionid)
+      //console.log(form)
+      //form.submit();
+      // console.log(response['result'])
+      // window.location.href = '/'
+    }
+  
+  </script>
+</head>
+
+<body>
+
+  <div id="container"></div>
+  <!-- <div id="notes">Still need to add label scaling, remove reference to window from textlabels.</div> -->
+  <script>
+    var wordsPoints = <%- JSON.stringify(wordsPoints.word3dpoint) %>;
+  </script>
+
+  <script src="https://threejs.org/build/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+  <script src="./javascripts/view.js"></script>
+
+  <br><br><br>
+  <!-- http://eez114.ece.ust.hk:8000/api/ask -->
+  <form action="http://eez114.ece.ust.hk:8000/api/ask" method="POST" id="myForm">
+        <input type="text" name="text1" value="">
+		<br>
+		寻找K个邻词。K = <input type="text" name="textK" value="10">
+		<HR>
+		发散模式<br>
+		<input type="checkbox" name="hyperMode" value="inertia">保持发散方向
+		<input type="checkbox" name="hyperMode" value="driftAway">远离已见词，偏离距离 = <input type="text" name="driftDist" value="0.1">（建议<0.5）
+		<input type="checkbox" name="hyperMode" value="differClass">只显示不同词性的词
+		<HR>
+		词性限制<br>
+		<input type="radio" name="wordclass" value="adj">仅形容词
+		<input type="radio" name="wordclass" value="noun">仅名词
+		<HR>
+		<input type="radio" name="mode" value="relation">使用关系词
+		<br>
+		关系词1<input type="text" name="text2" value=""> -> 关系词2<input type="text" name="text3" value="">
+		<HR>
+        <input type="button" name="my-form" value="确定"  onclick="my_send()">
+  </form>
+</body>
+
+</html>

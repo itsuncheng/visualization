@@ -34,3 +34,10 @@ body {
   bottom: 10px;
   left: 10px;
 }
+
+#panel {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: white;
+}
