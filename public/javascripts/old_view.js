@@ -7,37 +7,14 @@ var scene;
 var renderer;
 var container;
 
-var words = ["coast",
-            "womanly",
-            "measly",
-            "helpful",
-            "effect",
-            "muddled",
-            "fragile",
-            "cable",
-            "dime",
-            "infamous",
-            "toad",
-            "ill-fated",
-            "describe",
-            "imaginary",
-            "abrupt",
-            "even",
-            "club",
-            "wacky",
-            "woebegone",
-            "island",
-            "suffer",
-            "duck",
-            "stocking",
-            "sack",
-            "year",
-            "run",
-            "deafening",
-            "solid",
-            "uncle",
-            "humor"]
 var textlabels=[];
+
+var scaleUp = 2000
+
+wordsPoints = wordsPoints.slice(0,1000)
+// console.log(wordsPoints);
+// response_global = JSON.parse(response_global)
+// console.log(response_global)
 
 function init(){
 
@@ -51,20 +28,21 @@ function init(){
   // world
   var geometry = new THREE.CylinderGeometry(0, 10, 30, 4, 1);
 
-  for (var i = 0; i < words.length; i++) {
+  for (var i = 0; i < wordsPoints.length; i++) {
     var material = new THREE.MeshBasicMaterial({
       color: 0xffffff
     });
 
     var mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = (Math.random() - 0.5) * 1000;
-    mesh.position.y = (Math.random() - 0.5) * 1000;
-    mesh.position.z = (Math.random() - 0.5) * 1000;
+    // console.log(Object.values(wordsPoints[i])[0]);
+    mesh.position.x = Object.values(wordsPoints[i])[0][0] * scaleUp;
+    mesh.position.y = Object.values(wordsPoints[i])[0][1] * scaleUp;
+    mesh.position.z = Object.values(wordsPoints[i])[0][2] * scaleUp;
     
     scene.add(mesh);
 
     var text = createTextLabel();
-    text.setHTML(words[i]);
+    text.setHTML(Object.keys(wordsPoints[i])[0]);
     text.setParent(mesh);
     textlabels.push(text);
 
@@ -94,7 +72,10 @@ function init(){
   document.addEventListener('click', onClick, false);
   document.addEventListener('keydown', onKeyDown, false);
 
+  console.log("scene.children: ", scene.children)
 }
+
+
 var addLineMode = false;
 function onKeyDown(event){
   if(event.keyCode == 70){
@@ -109,7 +90,7 @@ var secondWordPos = undefined;
 
 var clickCount = 0;
 var timeout = 250;
-var prevMeshPos = undefined;
+var currentLine = null;
 
 function onClick(event) {
   if (addLineMode){
@@ -119,16 +100,29 @@ function onClick(event) {
   
     raycaster.setFromCamera( mouse, camera );
     var intersects = raycaster.intersectObjects( scene.children );
-
+    console.log(intersects.length)
     for(let i=0; i<intersects.length; i++){
-      if(intersects[i].object.geometry.type == "CylinderGeometry"){
+      // console.log(intersects[i].object.visible);
+      if(intersects[i].object.geometry.type == "CylinderGeometry" && intersects[i].object.visible){
         if (wordsSelected == 0){
           console.log("first word is selected");
           firstWordPos = intersects[i].object.position;
+          wordsSelected +=1;
         }
         else if (wordsSelected == 1){
           console.log("second word is selected");
           secondWordPos = intersects[i].object.position;
+
+          //remove current line
+          // if(currentLine != null){
+          //   scene.remove(currentLine);
+          //   currentLine = null;
+          // }
+          
+          //hide all similarity labels
+          // for(var j=0; j<similarityLabels.length; j++){
+          //   similarityLabels[j].element.style.visibility = "hidden"
+          // }
 
           var geometry = new THREE.Geometry();
           geometry.vertices.push(new THREE.Vector3(firstWordPos.x, firstWordPos.y, firstWordPos.z));
@@ -136,11 +130,47 @@ function onClick(event) {
           var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
           var line = new THREE.Line( geometry, material );
           scene.add( line );
-          
-          wordsSelected = -1;
-          addLineMode = false;
+          currentLine = line
+
+          //post request
+        //   firstWordPosList = Object.values(firstWordPos)
+        //   secondWordPosList = Object.values(secondWordPos)
+        //   console.log(textlabels.length)
+        //   $.ajax({
+        //     url: "/searchWord",
+        //     type: "POST",
+        //     dataType: "json",
+        //     data: JSON.stringify({"firstWordPosList": firstWordPosList, "secondWordPosList": secondWordPosList}),
+        //     contentType: "application/json",
+        //     cache: false,
+        //     timeout: 5000,
+        //     complete: function() {
+        //       //called when complete
+        //       wordsSelected = 0;
+        //       addLineMode = false;
+        //       console.log('process complete');
+        //     },
+        
+        //     success: function(data) {
+        //       console.log(data);
+        //       var text = createTextLabel();
+        //       text.setHTML(data.similarity);
+        //       text.setParent(line);
+        //       text.element.style.visibility = "visible"
+        //       similarityLabels.push(text);
+        //       line.children = text
+        //       container.appendChild(text.element);
+        //       console.log('process success');
+        //    },
+        
+        //     error: function() {
+        //       console.log('process error');
+        //     },
+        //   });
+        wordsSelected = 0;
+        addLineMode = false;
         }
-        wordsSelected +=1;
+
         break;
       }
     }
@@ -160,38 +190,17 @@ function onClick(event) {
           console.log('singleClick');
           for (let i=0; i<intersects.length; i++){
             if (intersects[i].object.geometry.type == "CylinderGeometry"){
-              console.log("prevMeshPos changed to cameraPos");
-              camera.position.set(intersects[i].object.position.x + 10, intersects[i].object.position.y + 10, intersects[i].object.position.z);
-              var vector = new THREE.Vector3(0, 0, -1);
-              vector.applyQuaternion(camera.quaternion);
-              camera.lookAt(vector);
-  
-  
+              camera.position.set(intersects[i].object.position.x, intersects[i].object.position.y, intersects[i].object.position.z);
+              camera.translateZ(130); // where `r` is the desired distance
               controls.update();
-              prevMeshPos = intersects[i].object.position;
-              // prevMeshPos = camera.position;
-              // console.log("prevMeshPos here changed: " + JSON.stringify(prevMeshPos));
               break;
             }
           }
         } else {
           console.log('double click');
           for (let i=0; i<intersects.length; i++){
-            // console.log("prevMeshPos: " + JSON.stringify(prevMeshPos));
-            // console.log("cameraPos: " + JSON.stringify(camera.position));
-            // console.log(comparePos(prevMeshPos, camera.position));
-            // if (intersects[i].object.geometry.type == "CylinderGeometry" && comparePos(prevMeshPos, camera.position) ){
-            //   console.log('Drawing a line...');
-            //   var geometry = new THREE.Geometry();
-            //   geometry.vertices.push(new THREE.Vector3(intersects[i].object.position.x,
-            //     intersects[i].object.position.y, intersects[i].object.position.z));
-            //   geometry.vertices.push(new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z) );
-            //   var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
-            //   var line = new THREE.Line( geometry, material );
-            //   scene.add( line );
-            //   break;
-            // }
             if(intersects[i].object.geometry.type == "Geometry"){
+              // intersects[i].object.children.element.style.visibility = "hidden"
               scene.remove(intersects[i].object);
               break;
             }
@@ -230,11 +239,109 @@ function animate() {
   controls.update();
 	render();
 }
-
+var resp = null;
+var similarityLabels = []
 function render(){
 
   for(var i=0; i<textlabels.length; i++) {
     textlabels[i].updatePosition();
+  }
+  for(var i=0; i<similarityLabels.length; i++) {
+    similarityLabels[i].updatePosition();
+  }
+  
+  if(response_global != null){
+    resp = JSON.parse(response_global)
+    response_global = null
+    console.log(resp)
+  }
+
+  // using form
+  if (resp != null){
+    sessionid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    var index = 0
+    var displayedWordsPos = []
+
+    for(child of scene.children){
+      child.visible = true
+    }
+
+    for(var i=0; i<textlabels.length; i++){
+      textlabels[i].element.style.visibility = "visible"
+    }
+
+    //remove current line
+    if(currentLine != null){
+      scene.remove(currentLine);
+      currentLine = null;
+    }
+
+    //hide all similarity labels
+    // for(var i=0; i<similarityLabels.length; i++){
+    //   similarityLabels[i].element.style.visibility = "hidden"
+    // }
+
+
+    for(child of scene.children){
+      var child_position = child.position
+      child_position = Object.values(child_position)
+      child_position = child_position.map(function(x) { return x * scaleUp; });
+      var allWordsNotInDisplay = true
+      for (wordAndPos of resp.result){
+        var pos = wordAndPos[1]
+        if (comparePos(pos, child_position)){
+          allWordsNotInDisplay = false
+        }
+      }
+
+      if (allWordsNotInDisplay){
+        child.visible = false
+        textlabels[index].element.style.visibility = "hidden"
+      }
+      else {
+        child.visible = true
+        displayedWordsPos.push(child_position)
+        textlabels[index].element.style.visibility = "visible"
+      }
+
+      index += 1
+    }
+
+    for(wordAndPos of resp.result){
+      var word = wordAndPos[0]
+      var pos = wordAndPos[1]
+
+      wordInDisplay = false
+      for (displayedPos of displayedWordsPos){
+        if (comparePos(pos, displayedPos)){
+          wordInDisplay = true
+        }
+      }
+
+      if(!wordInDisplay){
+        //create new mesh
+        var geometry = new THREE.CylinderGeometry(0, 10, 30, 4, 1);
+        var material = new THREE.MeshBasicMaterial({
+          color: 0xffffff
+        });
+
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = pos[0] * scaleUp;
+        mesh.position.y = pos[1] * scaleUp;
+        mesh.position.z = pos[2] * scaleUp;
+        
+        scene.add(mesh);
+
+        var text = createTextLabel();
+        text.setHTML(word);
+        text.setParent(mesh);
+        text.element.style.visibility = "visible"
+        textlabels.push(text);
+
+        container.appendChild(text.element);
+      }
+    }
+    resp = null
   }
 
   renderer.render(scene, camera);
@@ -250,7 +357,7 @@ function createTextLabel() {
   div.innerHTML = "hi there!";
   div.style.top = -1000;
   div.style.left = -1000;
-  // div.style.visibility = "hidden";
+  div.style.visibility = "visible";
 
   return {
     element: div,
