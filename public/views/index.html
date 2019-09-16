@@ -3,6 +3,7 @@
 <head>
   <title><%= title%></title>
   
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="/stylesheets/style.css">
   <script
   src="https://code.jquery.com/jquery-3.4.1.js"
@@ -65,36 +66,61 @@
   <div id="panel">
     Instructions: <br>
     Click on a word to focus on the word. <br>
-    Press "F" then click on two words to show similarity between them. <br>
+    Press "F" then click on two words to connect them. <br>
     Search for K-nearest words below. <br><br>
 
     <form id="myForm">
-          词：<input type="text" name="text1" value="">
-      <br>
-      寻找K个邻词。K = <input type="text" name="textK" value="10">
+      <div class="form-inline">
+        词：<input type="text" name="text1" value="" class="form-control form-control-sm">
+      </div>
+      <div class="form-inline">
+        寻找K个邻词。K = <input type="text" name="textK" value="10" class="form-control form-control-sm">
+      </div>
       <HR>
-      发散模式<br>
-      <input type="checkbox" name="hyperMode" value="inertia">保持发散方向<br>
-      <input type="checkbox" name="hyperMode" value="driftAway">远离已见词，偏离距离 = <input type="text" name="driftDist" value="0.1">（建议<0.5）<br>
-      <input type="checkbox" name="hyperMode" value="differClass">只显示不同词性的词<br>
+      <div class="form-group">
+        发散模式
+        <div class="form-inline">
+          <input type="checkbox" name="hyperMode" value="inertia" class="form-control form-control-sm">保持发散方向
+        </div>
+        <div class="form-inline">
+            <input type="checkbox" name="hyperMode" value="driftAway" class="form-control form-control-sm">远离已见词，偏离距离 = <input type="text" name="driftDist" value="0.1" class="form-control form-control-sm">（建议<0.5)
+        </div>
+        <div class="form-inline">
+            <input type="checkbox" name="hyperMode" value="differClass" class="form-control form-control-sm">只显示不同词性的词
+        </div>        
+      </div>
       <HR>
-      词性限制<br>
-      <input type="radio" name="wordclass" value="adj">仅形容词
-      <input type="radio" name="wordclass" value="noun">仅名词
+      <div class="form-group">
+        词性限制
+        <div class="form-inline">
+          <input type="radio" name="wordclass" value="adj" class="form-control form-control-sm">仅形容词
+        </div>
+        <div class="form-inline">
+          <input type="radio" name="wordclass" value="noun" class="form-control form-control-sm">仅名词
+        </div>  
+      </div>
       <HR>
-      <input type="radio" name="mode" value="relation">使用关系词
-      <br>
-      关系词1<input type="text" name="text2" value=""> -> 关系词2<input type="text" name="text3" value="">
+      <div class="form-group">
+        <div class="form-inline">
+          <input type="radio" name="mode" value="relation" class="form-control form-control-sm">使用关系词
+        </div>
+        <div class="form-inline">
+          关系词1<input type="text" name="text2" value="" class="form-control form-control-sm"> -> 关系词2<input type="text" name="text3" value="" class="form-control form-control-sm">
+        </div>
+      </div>
       <HR>
-          <input type="button" name="my-form" value="确定"  onclick="my_send()">
+      <input type="button" name="my-form" value="确定"  onclick="my_send()" class="btn btn-primary btn-sm">
     </form>
-    <button type="button" onclick="revert()">Revert</button>
+    <button type="button" onclick="revert()" class="btn btn-danger btn-sm" type="reset" value="Revert">Revert</button>
   </div>
  
 
   <script src="https://threejs.org/build/three.min.js"></script>
   <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
   <script src="./javascripts/view.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </body>
 

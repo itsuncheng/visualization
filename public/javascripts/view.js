@@ -262,10 +262,11 @@ function render(){
         index += 1
       }
       for (lineObj of lines){
+        console.log(lineObj);
         lineObj.firstWord.visible = true;
         lineObj.firstWord.children.element.style.visibility = "visible";
         lineObj.secondWord.visible = true;
-        lineObj.secondWord.children.element.style.visibility = "visible"
+        lineObj.secondWord.children.element.style.visibility = "visible";
       }
       //save the textLabels
 
@@ -301,6 +302,7 @@ function render(){
         text.setParent(mesh);
         text.element.style.visibility = "visible"
         textlabels.push(text);
+        mesh.children = text;
 
         container.appendChild(text.element);
       }
