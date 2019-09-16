@@ -40,7 +40,9 @@ body {
   top: 20px;
   left: 20px;
   padding: 10px;
-  width: 400px;
+  /* width: 400px; */
+  width: 27%;
+  height: 95%;
   background-color: white;
   border-radius: 10px;
 	-webkit-border-radius:10px;

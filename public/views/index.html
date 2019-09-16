@@ -64,9 +64,10 @@
   <div id="container"></div>
 
   <div id="panel">
-    Instructions: <br>
+    <h5><b>Instructions: </b></h5>
     Click on a word to focus on the word. <br>
     Press "F" then click on two words to connect them. <br>
+    Double click the lines to remove them. <br>
     Search for K-nearest words below. <br><br>
 
     <form id="myForm">
@@ -93,9 +94,7 @@
       <div class="form-group">
         词性限制
         <div class="form-inline">
-          <input type="radio" name="wordclass" value="adj" class="form-control form-control-sm">仅形容词
-        </div>
-        <div class="form-inline">
+          <input type="radio" name="wordclass" value="adj" class="form-control form-control-sm">仅形容词 &nbsp
           <input type="radio" name="wordclass" value="noun" class="form-control form-control-sm">仅名词
         </div>  
       </div>
@@ -105,7 +104,7 @@
           <input type="radio" name="mode" value="relation" class="form-control form-control-sm">使用关系词
         </div>
         <div class="form-inline">
-          关系词1<input type="text" name="text2" value="" class="form-control form-control-sm"> -> 关系词2<input type="text" name="text3" value="" class="form-control form-control-sm">
+          关系词1<input type="text" name="text2" value="" class="form-control form-control-sm">&nbsp-> 关系词2<input type="text" name="text3" value="" class="form-control form-control-sm">
         </div>
       </div>
       <HR>
